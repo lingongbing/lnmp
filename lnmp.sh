@@ -73,10 +73,10 @@ mv composer.phar /usr/local/bin/composer
 printf "\nPATH=\"$(composer config -g home 2>/dev/null)/vendor/bin:\$PATH\"\n" | tee -a ~/.profile
 
 # Set Some PHP CLI Settings
-sudo sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.2/cli/php.ini
-sudo sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.2/cli/php.ini
-sudo sed -i "s/memory_limit = .*/memory_limit = 512M/" /etc/php/7.2/cli/php.ini
-sudo sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.2/cli/php.ini
+sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.2/cli/php.ini
+sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.2/cli/php.ini
+sed -i "s/memory_limit = .*/memory_limit = 512M/" /etc/php/7.2/cli/php.ini
+sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.2/cli/php.ini
 
 
 # Install Nginx & PHP-FPM
@@ -142,6 +142,9 @@ service php7.1-fpm restart
 # Install Node
 apt-get install -y nodejs
 
+# Install SQLite
+apt-get install -y sqlite3 libsqlite3-dev
+
 # Install MySQL
 debconf-set-selections <<< "mysql-community-server mysql-community-server/root-pass password ${MYSQL_ROOT_PASSWORD}"
 debconf-set-selections <<< "mysql-community-server mysql-community-server/re-root-pass password ${MYSQL_ROOT_PASSWORD}"
@@ -157,11 +160,15 @@ mysql --user="root" --password="${MYSQL_ROOT_PASSWORD}" -e "FLUSH PRIVILEGES;"
 service mysql restart
 
 # Install A Few Other Things
-apt-get install -y redis-server
+apt-get install -y redis-server memcached beanstalkd
 
 # Configure Supervisor
 systemctl enable supervisor.service
 service supervisor start
+
+# Configure Beanstalkd
+sed -i "s/#START=yes/START=yes/" /etc/default/beanstalkd
+/etc/init.d/beanstalkd start
 
 # Enable Swap Memory
 /bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=1024
