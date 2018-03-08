@@ -150,8 +150,12 @@ debconf-set-selections <<< "mysql-community-server mysql-community-server/root-p
 debconf-set-selections <<< "mysql-community-server mysql-community-server/re-root-pass password ${MYSQL_ROOT_PASSWORD}"
 apt-get install -y mysql-server
 
-# Configure MySQL Password Lifetime
+# Configure MySQL
 echo "default_password_lifetime = 0" >> /etc/mysql/mysql.conf.d/mysqld.cnf
+echo "innodb_buffer_pool_size = 128M" >> /etc/mysql/mysql.conf.d/mysqld.cnf
+echo "innodb_log_file_size = 128M" >> /etc/mysql/mysql.conf.d/mysqld.cnf
+echo "innodb_file_per_table = 1" >> /etc/mysql/mysql.conf.d/mysqld.cnf
+echo "innodb_flush_method = O_DIRECT" >> /etc/mysql/mysql.conf.d/mysqld.cnf
 
 mysql --user="root" --password="${MYSQL_ROOT_PASSWORD}" -e "CREATE USER '${MYSQL_NORMAL_USER}'@'0.0.0.0' IDENTIFIED BY '${MYSQL_NORMAL_USER_PASSWORD}';"
 mysql --user="root" --password="${MYSQL_ROOT_PASSWORD}" -e "GRANT ALL ON *.* TO '${MYSQL_NORMAL_USER}'@'127.0.0.1' IDENTIFIED BY '${MYSQL_NORMAL_USER_PASSWORD}' WITH GRANT OPTION;"
