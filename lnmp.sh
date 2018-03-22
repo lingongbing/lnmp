@@ -101,6 +101,18 @@ sed -i "s/upload_max_filesize = .*/upload_max_filesize = 100M/" /etc/php/7.2/fpm
 sed -i "s/post_max_size = .*/post_max_size = 100M/" /etc/php/7.2/fpm/php.ini
 sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.2/fpm/php.ini
 
+sed -i "s/;opcache.enable=1/opcache.enable=1/" /etc/php/7.2/fpm/php.ini
+sed -i "s/;opcache.enable_cli=0/opcache.enable_cli=1/" /etc/php/7.2/fpm/php.ini
+sed -i "s/;opcache.memory_consumption=128/opcache.memory_consumption=128/" /etc/php/7.2/fpm/php.ini
+sed -i "s/;opcache.max_accelerated_files=10000/opcache.max_accelerated_files=100000/" /etc/php/7.2/fpm/php.ini
+sed -i "s/;opcache.max_wasted_percentage=5/opcache.max_wasted_percentage=5/" /etc/php/7.2/fpm/php.ini
+sed -i "s/;opcache.use_cwd=1/opcache.use_cwd=1/" /etc/php/7.2/fpm/php.ini
+sed -i "s/;opcache.validate_timestamps=1/opcache.validate_timestamps=1/" /etc/php/7.2/fpm/php.ini
+sed -i "s/;opcache.revalidate_freq=2/opcache.revalidate_freq=60/" /etc/php/7.2/fpm/php.ini
+sed -i "s/;opcache.optimization_level=0xffffffff/opcache.optimization_level=-1/" /etc/php/7.2/fpm/php.ini
+sed -i "s/;opcache.consistency_checks=0/opcache.consistency_checks=0/" /etc/php/7.2/fpm/php.ini
+sed -i "s/;opcache.file_cache=/opcache.file_cache=/tmp/" /etc/php/7.2/fpm/php.ini
+
 printf "[openssl]\n" | tee -a /etc/php/7.2/fpm/php.ini
 printf "openssl.cainfo = /etc/ssl/certs/ca-certificates.crt\n" | tee -a /etc/php/7.2/fpm/php.ini
 
