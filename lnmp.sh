@@ -111,7 +111,8 @@ sed -i "s/;opcache.validate_timestamps=1/opcache.validate_timestamps=1/" /etc/ph
 sed -i "s/;opcache.revalidate_freq=2/opcache.revalidate_freq=60/" /etc/php/7.2/fpm/php.ini
 sed -i "s/;opcache.optimization_level=0xffffffff/opcache.optimization_level=-1/" /etc/php/7.2/fpm/php.ini
 sed -i "s/;opcache.consistency_checks=0/opcache.consistency_checks=0/" /etc/php/7.2/fpm/php.ini
-sed -i "s/;opcache.file_cache=/opcache.file_cache=/tmp/" /etc/php/7.2/fpm/php.ini
+sed -i "s/;;opcache.huge_code_pages=1/opcache.huge_code_pages=1/" /etc/php/7.2/fpm/php.ini
+sed -i "s#;opcache.file_cache=#opcache.file_cache=/tmp#" /etc/php/7.2/fpm/php.ini
 
 printf "[openssl]\n" | tee -a /etc/php/7.2/fpm/php.ini
 printf "openssl.cainfo = /etc/ssl/certs/ca-certificates.crt\n" | tee -a /etc/php/7.2/fpm/php.ini
