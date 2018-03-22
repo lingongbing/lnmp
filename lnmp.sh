@@ -78,7 +78,6 @@ sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.2/cli/php.ini
 sed -i "s/memory_limit = .*/memory_limit = 512M/" /etc/php/7.2/cli/php.ini
 sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.2/cli/php.ini
 
-
 # Install Nginx & PHP-FPM
 apt-get install -y --allow-downgrades --allow-remove-essential --allow-change-held-packages \
 nginx php7.2-fpm
@@ -101,6 +100,15 @@ sed -i "s/memory_limit = .*/memory_limit = 512M/" /etc/php/7.2/fpm/php.ini
 sed -i "s/upload_max_filesize = .*/upload_max_filesize = 100M/" /etc/php/7.2/fpm/php.ini
 sed -i "s/post_max_size = .*/post_max_size = 100M/" /etc/php/7.2/fpm/php.ini
 sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.2/fpm/php.ini
+
+printf "[openssl]\n" | tee -a /etc/php/7.2/fpm/php.ini
+printf "openssl.cainfo = /etc/ssl/certs/ca-certificates.crt\n" | tee -a /etc/php/7.2/fpm/php.ini
+
+printf "[curl]\n" | tee -a /etc/php/7.2/fpm/php.ini
+printf "curl.cainfo = /etc/ssl/certs/ca-certificates.crt\n" | tee -a /etc/php/7.2/fpm/php.ini
+
+# Disable XDebug On The CLI
+sudo phpdismod -s cli xdebug
 
 # Setup Some fastcgi_params Options
 cat > /etc/nginx/fastcgi_params << EOF
@@ -137,7 +145,7 @@ sed -i "s/listen\.group.*/listen.group = www/" /etc/php/7.2/fpm/pool.d/www.conf
 sed -i "s/;listen\.mode.*/listen.mode = 0666/" /etc/php/7.2/fpm/pool.d/www.conf
 
 service nginx restart
-service php7.1-fpm restart
+service php7.2-fpm restart
 
 # Install Node
 apt-get install -y nodejs
