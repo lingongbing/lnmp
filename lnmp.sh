@@ -7,18 +7,21 @@ MYSQL_ROOT_PASSWORD=""
 MYSQL_NORMAL_USER="estuser"
 MYSQL_NORMAL_USER_PASSWORD=""
 
+# Check if user is root
+[ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
+
 # Check if password is defined
 if [[ "$MYSQL_ROOT_PASSWORD" == "" ]]; then
     echo "${CFAILURE}Error: MYSQL_ROOT_PASSWORD not define!!${CEND}";
     exit 1;
 fi
+
 if [[ "$MYSQL_NORMAL_USER_PASSWORD" == "" ]]; then
     echo "${CFAILURE}Error: MYSQL_NORMAL_USER_PASSWORD not define!!${CEND}";
     exit 1;
 fi
 
 # Force Locale
-
 export LC_ALL="en_US.UTF-8"
 echo "LC_ALL=en_US.UTF-8" >> /etc/default/locale
 locale-gen en_US.UTF-8
