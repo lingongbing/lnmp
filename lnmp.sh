@@ -3,9 +3,9 @@
 export DEBIAN_FRONTEND=noninteractive
 
 # Configure
-MYSQL_ROOT_PASSWORD=""
-MYSQL_NORMAL_USER="estuser"
-MYSQL_NORMAL_USER_PASSWORD=""
+MYSQL_ROOT_PASSWORD="root"
+MYSQL_NORMAL_USER="admin"
+MYSQL_NORMAL_USER_PASSWORD="admin"
 
 # Check if user is root
 [ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
@@ -180,6 +180,7 @@ echo "innodb_buffer_pool_size = 128M" >> /etc/mysql/mysql.conf.d/mysqld.cnf
 echo "innodb_log_file_size = 128M" >> /etc/mysql/mysql.conf.d/mysqld.cnf
 echo "innodb_file_per_table = 1" >> /etc/mysql/mysql.conf.d/mysqld.cnf
 echo "innodb_flush_method = O_DIRECT" >> /etc/mysql/mysql.conf.d/mysqld.cnf
+echo "default_authentication_plugin=mysql_native_password" >> /etc/mysql/mysql.conf.d/mysqld.cnf
 
 mysql --user="root" --password="${MYSQL_ROOT_PASSWORD}" -e "CREATE USER '${MYSQL_NORMAL_USER}'@'0.0.0.0' IDENTIFIED BY '${MYSQL_NORMAL_USER_PASSWORD}';"
 mysql --user="root" --password="${MYSQL_ROOT_PASSWORD}" -e "GRANT ALL ON *.* TO '${MYSQL_NORMAL_USER}'@'127.0.0.1' IDENTIFIED BY '${MYSQL_NORMAL_USER_PASSWORD}' WITH GRANT OPTION;"
@@ -188,20 +189,11 @@ mysql --user="root" --password="${MYSQL_ROOT_PASSWORD}" -e "FLUSH PRIVILEGES;"
 service mysql restart
 
 # Install A Few Other Things
-apt-get install -y redis-server memcached beanstalkd
+apt-get install -y redis-server memcached
 
 # Configure Supervisor
 systemctl enable supervisor.service
 service supervisor start
-
-# Configure Beanstalkd
-sed -i "s/#START=yes/START=yes/" /etc/default/beanstalkd
-/etc/init.d/beanstalkd start
-
-# Enable Swap Memory
-/bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=1024
-/sbin/mkswap /var/swap.1
-/sbin/swapon /var/swap.1
 
 clear
 echo "--"
